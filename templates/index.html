@@ -852,19 +852,17 @@
               <p id="weekly-stats-image-range" style="font-size:12px;color:var(--text-muted);margin-bottom:8px"></p>
               <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Mana → NLSS → Chakki → Jondo</p>
               <div id="weekly-participation"><p style="color:var(--text-muted);font-size:13px">Bấm “Tải thống kê” để xem số liệu</p></div>
+              <h4 style="margin-top:20px">Lịch rảnh đã gửi</h4>
+              <div id="weekly-availability"><p style="color:var(--text-muted);font-size:13px">Bấm “Tải thống kê” để xem số liệu</p></div>
             </div>
             <div class="report-section">
               <h4>2. Bản thân đánh giá</h4>
               <div class="form-group">
-                <label>a. Từng anh em đã có phát triển gì?</label>
-                <textarea id="eval-individual" class="form-control" placeholder="Ví dụ: Chị Ngân bắt đầu chủ động chia sẻ hơn..."></textarea>
-              </div>
-              <div class="form-group">
-                <label>b. Tập thể đã phát triển gì?</label>
+                <label>a. Tập thể đã phát triển gì?</label>
                 <textarea id="eval-team" class="form-control" placeholder="Tổ đoàn kết hơn, tỉ lệ hoàn thành tăng..."></textarea>
               </div>
               <div class="form-group">
-                <label>c. Khó khăn của bản thân khi quan sát anh em</label>
+                <label>b. Khó khăn của bản thân khi quan sát anh em</label>
                 <textarea id="eval-difficulty" class="form-control" placeholder="Khó theo dõi vì lịch bận..."></textarea>
               </div>
             </div>
@@ -873,10 +871,6 @@
               <div class="form-group">
                 <label>a. Đã học hỏi được điều gì?</label>
                 <textarea id="learn-what" class="form-control"></textarea>
-              </div>
-              <div class="form-group">
-                <label>b. Đã nhận ra được điều gì?</label>
-                <textarea id="realize-what" class="form-control"></textarea>
               </div>
             </div>
           </div>
@@ -1395,7 +1389,10 @@
       const from = document.getElementById("week-from").value;
       const to = document.getElementById("week-to").value;
       if (!from || !to) { showToast("⚠️ Chọn khoảng ngày trước"); return false; }
-      const res = await api(`/api/stats?from=${from}&to=${to}`);
+      const [res, availabilityWeeks] = await Promise.all([
+        api(`/api/stats?from=${from}&to=${to}`),
+        api("/api/availability"),
+      ]);
       const stats = res.stats || {};
       const totalDays = res.total_days || 0;
       let html = `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Tổng ${totalDays} ngày</div>`;
@@ -1411,6 +1408,19 @@
           </div>`;
       });
       document.getElementById("weekly-participation").innerHTML = html;
+      const matchingWeeks = Object.entries(availabilityWeeks || {}).filter(([weekKey]) => {
+        const weekEnd = new Date(`${weekKey}T00:00:00Z`);
+        weekEnd.setUTCDate(weekEnd.getUTCDate() + 6);
+        return weekKey <= to && weekEnd.toISOString().slice(0, 10) >= from;
+      });
+      const submittedMembers = new Set(matchingWeeks.flatMap(([, schedules]) => Object.keys(schedules || {})));
+      const submittedCount = MEMBERS.filter(member => submittedMembers.has(String(member.id))).length;
+      let availabilityHtml = `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Đã gửi lịch rảnh: <b>${submittedCount}/${MEMBERS.length}</b> thành viên</div>`;
+      MEMBERS.forEach(member => {
+        const submitted = submittedMembers.has(String(member.id));
+        availabilityHtml += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${member.name}</span><b>${submitted ? "Đã gửi" : "Chưa gửi"}</b></div>`;
+      });
+      document.getElementById("weekly-availability").innerHTML = availabilityHtml;
       document.getElementById("weekly-stats-image-range").textContent = `Thời gian: ${formatDateVN(from)} – ${formatDateVN(to)}`;
       showToast("✅ Đã tải thống kê tuần");
       return true;
@@ -1727,15 +1737,13 @@
     function exportWeekly() {
       const from = document.getElementById("week-from").value;
       const to = document.getElementById("week-to").value;
-      const individual = document.getElementById("eval-individual").value;
       const team = document.getElementById("eval-team").value;
       const difficulty = document.getElementById("eval-difficulty").value;
       const learn = document.getElementById("learn-what").value;
-      const realize = document.getElementById("realize-what").value;
       let text = `📋 BÁO CÁO TUẦN – LEADER ĐL-T4\nThời gian: ${formatDateVN(from)} → ${formatDateVN(to)}\n\n`;
       text += `1. THAM GIA HOẠT ĐỘNG\n(Xem bảng thống kê)\n\n`;
-      text += `2. BẢN THÂN ĐÁNH GIÁ\na. Từng anh em:\n${individual || "—"}\n\nb. Tập thể:\n${team || "—"}\n\nc. Khó khăn:\n${difficulty || "—"}\n\n`;
-      text += `3. NHÌN NHẬN\na. Học hỏi:\n${learn || "—"}\n\nb. Nhận ra:\n${realize || "—"}\n\n— Hết —`;
+      text += `2. BẢN THÂN ĐÁNH GIÁ\na. Tập thể:\n${team || "—"}\n\nb. Khó khăn:\n${difficulty || "—"}\n\n`;
+      text += `3. NHÌN NHẬN\na. Học hỏi:\n${learn || "—"}\n\n— Hết —`;
       navigator.clipboard.writeText(text).then(() => showToast("✅ Đã copy báo cáo!")).catch(() => prompt("Copy:", text));
     }
 
