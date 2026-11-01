@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ĐL-T4 | Quản lý Tổ</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -65,11 +66,17 @@
     }
     .sidebar-logo {
       width: 44px; height: 44px;
-      background: linear-gradient(135deg, #5b6af0, #8b5cf6);
+      background: #fff;
       border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 13px;
       margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .sidebar-logo img {
+      display: block;
+      width: 100%; height: 100%;
+      object-fit: cover;
     }
     .nav-icon {
       width: 46px; height: 46px;
@@ -347,10 +354,8 @@
     }
     .profile-avatar {
       width: 64px; height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #f8d5d8, #e4d9f5);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 22px; color: #5b4a6e;
+      border-radius: 18px;
+      object-fit: cover;
       margin: 0 auto 12px;
     }
     .profile-card h4 { font-size: 16px; font-weight: 700; }
@@ -377,6 +382,89 @@
       margin-bottom: 8px;
       font-size: 13px;
       flex-wrap: wrap;
+    }
+    .event-mission-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .event-mission-row .form-control {
+      flex: 1;
+    }
+    .event-mission-remove {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #a34d58;
+      border-radius: 10px;
+      font: inherit;
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+    .event-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #fffdf9 100%);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .event-card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .event-card h3 {
+      margin: 8px 0 4px;
+      font-size: 20px;
+      letter-spacing: -0.3px;
+    }
+    .event-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .event-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--lavender);
+      color: #4a3a6e;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .event-description {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .event-progress {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .event-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--cream);
+      border-radius: 12px;
+      font-size: 13px;
+    }
+    .event-task-item.done {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+    .event-task-item input {
+      accent-color: #2d2a26;
+      width: 16px; height: 16px;
     }
     .badge {
       padding: 3px 10px;
@@ -516,9 +604,12 @@
   <div class="app-frame">
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <div class="sidebar-logo">ĐL</div>
+      <div class="sidebar-logo"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo ĐL-T4"></div>
       <button class="nav-icon active" data-section="dashboard" title="Tổng quan">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
+      </button>
+      <button class="nav-icon" data-section="events" title="Sự kiện & Mission">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
       </button>
       <button class="nav-icon" data-section="nlss" title="Chép NLSS">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -576,7 +667,7 @@
             </div>
             <div class="right-panel">
               <div class="profile-card">
-                <div class="profile-avatar">L</div>
+                <img class="profile-avatar" src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo ĐL-T4">
                 <h4>Leader Tổ 4</h4>
                 <p>Kế hoạch · ĐL-T4</p>
               </div>
@@ -584,6 +675,62 @@
                 <h4>📊 Phân tích nhanh</h4>
                 <div id="quick-analysis"></div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EVENTS -->
+      <section id="events" class="section">
+        <div class="topbar">
+          <div>
+            <h1>Sự kiện & Mission</h1>
+            <p class="subtitle">Tạo sự kiện và chia nhỏ mission để hoàn thành từng hạng mục</p>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-soft" onclick="loadEvents()">↻ Cập nhật</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-body">
+            <div class="form-group">
+              <label>Tên sự kiện</label>
+              <input id="event-title" class="form-control" placeholder="Ví dụ: Team Building cuối tháng" />
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+              <div class="form-group" style="margin:0">
+                <label>Ngày diễn ra</label>
+                <input id="event-date" type="date" class="form-control" />
+              </div>
+              <div class="form-group" style="margin:0">
+                <label>Địa điểm</label>
+                <input id="event-location" class="form-control" placeholder="Ví dụ: Phòng sinh hoạt" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Mô tả sự kiện</label>
+              <textarea id="event-description" class="form-control" placeholder="Mô tả ngắn gọn về sự kiện..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Mission nhỏ trong sự kiện</label>
+              <div id="event-missions"></div>
+              <button type="button" class="btn btn-soft" style="margin-top:10px" onclick="addEventMissionInput()">＋ Thêm mission</button>
+            </div>
+
+            <div class="topbar-actions" style="justify-content:flex-start">
+              <button class="btn btn-dark" onclick="createEvent()">✓ Tạo sự kiện</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div id="event-list">
+              <div class="empty-state">Chưa có sự kiện nào. Hãy tạo sự kiện đầu tiên.</div>
             </div>
           </div>
         </div>
@@ -1052,6 +1199,140 @@
             <span style="color:var(--text-muted)">Thiếu: ${x.miss}</span>
           </div>`).join("");
       }
+    }
+
+    function addEventMissionInput(value = "") {
+      const row = document.createElement("div");
+      row.className = "event-mission-row";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "form-control event-mission-input";
+      input.value = value;
+      input.placeholder = "Ví dụ: Mời các thành viên tham gia";
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "event-mission-remove";
+      removeBtn.textContent = "Xóa";
+      removeBtn.onclick = () => row.remove();
+      row.appendChild(input);
+      row.appendChild(removeBtn);
+      document.getElementById("event-missions").appendChild(row);
+    }
+
+    function resetEventForm() {
+      document.getElementById("event-title").value = "";
+      document.getElementById("event-date").value = todayStr();
+      document.getElementById("event-location").value = "";
+      document.getElementById("event-description").value = "";
+      const container = document.getElementById("event-missions");
+      container.innerHTML = "";
+      addEventMissionInput();
+    }
+
+    async function createEvent() {
+      const title = document.getElementById("event-title").value.trim();
+      const date = document.getElementById("event-date").value || todayStr();
+      const location = document.getElementById("event-location").value.trim();
+      const description = document.getElementById("event-description").value.trim();
+      const tasks = [...document.querySelectorAll(".event-mission-input")]
+        .map(input => input.value.trim())
+        .filter(Boolean)
+        .map((taskTitle, index) => ({
+          id: `task-${Date.now()}-${index}`,
+          title: taskTitle,
+          done: false,
+        }));
+
+      if (!title) {
+        showToast("⚠️ Vui lòng nhập tên sự kiện");
+        return;
+      }
+      if (!tasks.length) {
+        showToast("⚠️ Thêm ít nhất 1 mission nhỏ cho sự kiện");
+        return;
+      }
+
+      const res = await api("/api/events", {
+        method: "POST",
+        body: JSON.stringify({
+          action: "create",
+          event: { title, date, location, description, tasks }
+        })
+      });
+
+      if (!res.ok) {
+        showToast("❌ Không tạo được sự kiện");
+        return;
+      }
+
+      resetEventForm();
+      await loadEvents();
+      showToast("✅ Đã tạo sự kiện mới");
+    }
+
+    async function loadEvents() {
+      const res = await api("/api/events");
+      const events = Array.isArray(res.events) ? [...res.events].sort((a, b) => (b.date || "").localeCompare(a.date || "")) : [];
+      const list = document.getElementById("event-list");
+
+      if (!events.length) {
+        list.innerHTML = '<div class="empty-state">Chưa có sự kiện nào. Hãy tạo sự kiện đầu tiên.</div>';
+        return;
+      }
+
+      list.innerHTML = events.map(event => {
+        const tasks = Array.isArray(event.tasks) ? event.tasks : [];
+        const doneCount = tasks.filter(task => task.done).length;
+        const description = event.description ? `<p class="event-description">${event.description}</p>` : "";
+        const taskList = tasks.length
+          ? tasks.map(task => `
+            <label class="event-task-item ${task.done ? "done" : ""}">
+              <input type="checkbox" ${task.done ? "checked" : ""} onchange="toggleEventTask('${event.id}', '${task.id}', this.checked)" />
+              <span>${task.title}</span>
+            </label>
+          `).join("")
+          : '<div class="empty-state" style="padding:12px 0;">Chưa có mission nào</div>';
+        return `
+          <div class="event-card">
+            <div class="event-card-header">
+              <div>
+                <span class="event-badge">${formatDateVN(event.date || todayStr())}</span>
+                <h3>${event.title || "Sự kiện"}</h3>
+                ${event.location ? `<div class="event-meta">📍 ${event.location}</div>` : ""}
+              </div>
+              <button class="btn btn-soft" onclick="deleteEvent('${event.id}')">Xóa</button>
+            </div>
+            ${description}
+            <div class="event-progress">${doneCount}/${tasks.length} mission hoàn thành</div>
+            <div class="event-task-list">${taskList}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function toggleEventTask(eventId, taskId, done) {
+      const res = await api("/api/events", {
+        method: "POST",
+        body: JSON.stringify({ action: "toggle_task", event_id: eventId, task_id: taskId, done })
+      });
+      if (!res.ok) {
+        showToast("❌ Không cập nhật được mission");
+        return;
+      }
+      await loadEvents();
+    }
+
+    async function deleteEvent(eventId) {
+      const res = await api("/api/events", {
+        method: "POST",
+        body: JSON.stringify({ action: "delete", event_id: eventId })
+      });
+      if (!res.ok) {
+        showToast("❌ Không xóa được sự kiện");
+        return;
+      }
+      await loadEvents();
+      showToast("✅ Đã xóa sự kiện");
     }
 
     async function exportDashboardImage() {
@@ -1551,8 +1832,11 @@
       const el = document.getElementById(`${t}-date`);
       if (el) { el.value = todayStr(); loadAttendance(t); }
     });
+    document.getElementById("event-date").value = todayStr();
+    addEventMissionInput();
     renderReflectionForm();
     renderDashboard();
+    loadEvents();
 
     document.getElementById("availability-member").innerHTML = `<option value="">-- Chọn tên --</option>` + MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
     const weekMonday = new Date();

@@ -6,6 +6,7 @@
 - Điểm danh 4 mục: **Chép NLSS**, **Nghe Mana**, **Đi Chakki**, **Jondo**
 - Tự lưu nháp khi cập nhật trong ngày; có thể tick/bỏ tick và chốt kết quả chính thức cuối ngày
 - Cột ghi chú lý do chưa làm
+- Sự kiện có mission nhỏ kèm theo, có thể đánh dấu hoàn thành từng task trong sự kiện
 - Suy ngẫm Kinh thánh (copy gửi GYJN)
 - Báo cáo tuần của Leader
 - Tổng hợp lịch rảnh theo tuần: mỗi thành viên tick ngày/khung giờ có thể gặp, hệ thống xếp hạng giờ trùng nhau

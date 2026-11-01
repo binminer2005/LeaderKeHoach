@@ -6,6 +6,7 @@ Quản lý điểm danh NLSS / Mana / Chakki / Jondo + Suy ngẫm + Báo cáo tu
 
 import json
 import os
+import uuid
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, send_from_directory
 
@@ -363,6 +364,84 @@ def api_history():
             item["has_reflection"] = True
         history.append(item)
     return jsonify(history)
+
+
+@app.route("/api/events", methods=["GET", "POST"])
+def api_events():
+    """Lấy danh sách sự kiện và tạo/cập nhật mission nhỏ phía trong sự kiện."""
+    if request.method == "GET":
+        data = load_data()
+        events = data.get("events", [])
+        return jsonify({"ok": True, "events": events})
+
+    payload = request.get_json(silent=True) or {}
+    action = payload.get("action")
+    if not action:
+        action = "create"
+
+    def update(data):
+        events = data.setdefault("events", [])
+
+        if action == "toggle_task":
+            event_id = payload.get("event_id")
+            task_id = payload.get("task_id")
+            done = bool(payload.get("done", False))
+            for event in events:
+                if event.get("id") == event_id:
+                    for task in event.get("tasks", []):
+                        if task.get("id") == task_id:
+                            task["done"] = done
+                            break
+                    break
+            return
+
+        if action == "delete":
+            event_id = payload.get("event_id")
+            data["events"] = [event for event in events if event.get("id") != event_id]
+            return
+
+        event_input = payload.get("event") or {}
+        title = str(event_input.get("title", "")).strip()
+        date = str(event_input.get("date") or datetime.today().strftime("%Y-%m-%d")).strip()
+        description = str(event_input.get("description", "")).strip()
+        location = str(event_input.get("location", "")).strip()
+        tasks = []
+        for task in event_input.get("tasks", []):
+            if isinstance(task, dict):
+                task_title = str(task.get("title", "")).strip()
+                task_id = str(task.get("id") or f"task-{uuid.uuid4().hex[:8]}")
+                done = bool(task.get("done", False))
+            else:
+                task_title = str(task).strip()
+                task_id = f"task-{uuid.uuid4().hex[:8]}"
+                done = False
+            if not task_title:
+                continue
+            tasks.append({
+                "id": task_id,
+                "title": task_title,
+                "done": done,
+            })
+
+        if not title or not tasks:
+            raise ValueError("Thiếu tên sự kiện hoặc mission nhỏ")
+
+        event = {
+            "id": str(event_input.get("id") or f"event-{uuid.uuid4().hex[:8]}"),
+            "title": title,
+            "date": date,
+            "location": location,
+            "description": description,
+            "tasks": tasks,
+            "created_at": datetime.now().isoformat(timespec="seconds"),
+        }
+        events.insert(0, event)
+
+    try:
+        update_data(update)
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    return jsonify({"ok": True, "message": "Đã lưu sự kiện"})
 
 
 @app.route("/api/clear", methods=["POST"])
