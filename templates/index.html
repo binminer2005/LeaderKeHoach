@@ -1414,9 +1414,10 @@
         return weekKey <= to && weekEnd.toISOString().slice(0, 10) >= from;
       });
       const submittedMembers = new Set(matchingWeeks.flatMap(([, schedules]) => Object.keys(schedules || {})));
-      const submittedCount = MEMBERS.filter(member => submittedMembers.has(String(member.id))).length;
-      let availabilityHtml = `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Đã gửi lịch rảnh: <b>${submittedCount}/${MEMBERS.length}</b> thành viên</div>`;
-      MEMBERS.forEach(member => {
+      const reportMembers = MEMBERS.filter(member => !["1", "2"].includes(String(member.id)));
+      const submittedCount = reportMembers.filter(member => submittedMembers.has(String(member.id))).length;
+      let availabilityHtml = `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Đã gửi lịch rảnh: <b>${submittedCount}/${reportMembers.length}</b> thành viên</div>`;
+      reportMembers.forEach(member => {
         const submitted = submittedMembers.has(String(member.id));
         availabilityHtml += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${member.name}</span><b>${submitted ? "Đã gửi" : "Chưa gửi"}</b></div>`;
       });
