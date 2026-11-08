@@ -1395,6 +1395,7 @@
       ]);
       const stats = res.stats || {};
       const totalDays = res.total_days || 0;
+      const manaDays = res.mana_days || 0;
       let html = `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Tổng ${totalDays} ngày</div>`;
       MEMBERS.forEach(m => {
         const s = stats[m.id] || { nlss: 0, mana: 0, chakki: 0, jondo: 0 };
@@ -1402,7 +1403,7 @@
           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;flex-wrap:wrap;gap:6px">
             <span style="font-weight:600;min-width:140px">${m.name}</span>
             <span>NLSS: <b>${s.nlss||0}</b>/${totalDays}</span>
-            <span>Mana: <b>${s.mana||0}</b>/${totalDays}</span>
+            <span>Mana: <b>${s.mana||0}</b>/${manaDays}</span>
             <span>Chakki: <b>${s.chakki||0}</b>/${totalDays}</span>
             <span>Jondo: <b>${s.jondo||0}</b>/${totalDays}</span>
           </div>`;

@@ -311,10 +311,14 @@ def api_stats():
         start = datetime.strptime(from_date, "%Y-%m-%d")
         end = datetime.strptime(to_date, "%Y-%m-%d")
         total_days = 0
+        mana_days = 0
         d = start
         while d <= end:
             key = d.strftime("%Y-%m-%d")
             total_days += 1
+            is_mana_day = d.weekday() < 5
+            if is_mana_day:
+                mana_days += 1
             day = data.get(key, {})
             official_day = day.get("_official_attendance", day)
             for m in MEMBERS:
@@ -323,13 +327,14 @@ def api_stats():
                     rec = official_day.get(t, {}).get(mid) or official_day.get(t, {}).get(m["id"])
                     if rec:
                         status = rec.get("status") if isinstance(rec, dict) else rec
-                        if status == "ok":
+                        if status == "ok" and (t != "mana" or is_mana_day):
                             stats[m["id"]][t] += 1
             d += timedelta(days=1)
 
         result["from"] = from_date
         result["to"] = to_date
         result["total_days"] = total_days
+        result["mana_days"] = mana_days
         result["stats"] = stats
         return jsonify(result)
 
